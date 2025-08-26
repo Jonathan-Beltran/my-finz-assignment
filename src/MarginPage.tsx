@@ -2,19 +2,19 @@ import { useState } from "react";
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex">
       {/* sidebar */}
       <Sidebar />
       
       {/* main section */}
-      <main className="flex-1 flex">
+      <main className="flex-1 flex h-full">
         {/* margin report */}
-        <div className="flex-1 p-6">
+        <div className="flex-1">
           <WeeklyMarginReport />
         </div>
         
         {/* ai chat */}
-        <div className="w-80 bg-white border-l">
+        <div className="w-80 bg-white border-l h-full">
           <ChatPanel />
         </div>
       </main>
@@ -111,12 +111,58 @@ export default function Dashboard() {
 
 // margin report component
 function WeeklyMarginReport() {
+  const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
-
+  return (
+    <div className="h-full">
+      <iframe
+        src={`https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?usp=sharing`}
+        width="100%"
+        height="100%"
+        frameBorder="0"
+        className="w-full h-full"
+        title="Weekly Margin Report"
+      />
+    </div>
+  );
 }
+
+type Message = {
+  type: 'user' | 'ai';
+  content: string;
+};
 
 // ai chat component
 function ChatPanel() {
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSendMessage = async () => {
+    if (!message.trim()) return;
+
+    const userMessage: Message = { type: 'user', content: message };
+    setMessages(prev => [...prev, userMessage]);
+    setMessage("");
+    setIsLoading(true);
+    try {
+      const response: Message = {
+        type: 'ai',
+        content: 'Response'
+      };
+      setMessages(prev => [...prev, response]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleMessageEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
   return (
     <div className="h-full flex flex-col">
       {/* close button */}
@@ -129,19 +175,42 @@ function ChatPanel() {
         </button>
       </div>
       
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 overflow-y-auto min-h-0">
         {/* chat messages */}
+        {messages.map((msg, index) => (
+          <div key={index} className={`mb-4 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
+            <div className={`inline-block p-3 rounded-lg max-w-xs ${
+              msg.type === 'user' 
+              ? 'bg-[#F3F4F6] text-black' 
+              : 'bg-white text-black'}`}>
+              {msg.content}
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="text-left">
+            <div className="inline-block p-3 rounded-lg bg-gray-200 text-gray-800">
+              Thinking...
+            </div>
+          </div>
+        )}
       </div>
       
       {/* input and enter button */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t flex-shrink-0">
         <div className="flex gap-2">
           <input
             type="text"
             placeholder="Type a message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleMessageEnter}
             className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
-          <button className="p-2 bg-[#9CA3AE] text-white rounded-full hover:bg-blue-700 flex items-center justify-center">
+          <button 
+          onClick={handleSendMessage}
+          disabled={!message.trim()}
+          className="p-2 bg-[#9CA3AE] text-white rounded-full hover:bg-blue-700 flex items-center justify-center">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
