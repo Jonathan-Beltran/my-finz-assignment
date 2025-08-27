@@ -31,22 +31,37 @@ const transformSheetData = (rawData: any[]) => {
 
 export const updateSheet = async (cell: string, value: number) => {
     try {
-        // implement service account for write access
+        console.log(`Updating cell ${cell} with value: ${value}`);
         
-
-        //sim api call delay
-        await new Promise (resolve => setTimeout(resolve, 1000));
+        const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL;
         
-        return {
-            success: true,
-            message: `Successfully updated ${cell} to ${value}`
+        const url = `${APPS_SCRIPT_URL}?cell=${encodeURIComponent(cell)}&value=${encodeURIComponent(value)}`;
+        
+        const response = await fetch(url, {
+            method: 'GET',
+        });
 
-        };
-    } catch (error){
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('Apps Script response:', result);
+        
+        if (result.success) {
+            return {
+                success: true,
+                message: `Successfully updated ${cell} to $${value.toLocaleString()}`
+            };
+        } else {
+            throw new Error(result.error || 'Unknown error from Apps Script');
+        }
+        
+    } catch (error) {
         console.error('Error updating sheet:', error);
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Unknown error'
+            message: error instanceof Error ? error.message : 'Update failed'
         };
     }
 };

@@ -21,38 +21,50 @@ export const parseCommand = async(message: string): Promise<SheetUpdate | null> 
         }
         
         The user can update these metrics:
-        - Dine-In Sales: B8
-        - Delivery Sales: B9
-        - Other Income (Catering/ Events): B10
-        - Less: Sales Tax: B11
-        - Less: Tips Paid: B12
-        - Food Cost: B16
-        - Beverage Cost: B17
-        - Salaried Staff: B20
-        - Temp / Hourly Staff: B21
-        - Rent / Lease: B24
-        - Utilities: B25
-        - Internet & Phone: B26
-        - Software Subscriptions: B27
-        - Insurance: B28
-        - Loan Repayments: B29
-        - Others Fixed Expenses: B30
-        - One-time Repairs / Maintenance: B33
-        - Deep Cleaning / Pest Control: B34
-        - Equipment Rentals / Lease: B35
-        - Miscellaneous OpEx: B36
+        - Dine-In Sales: C8
+        - Delivery Sales: C9
+        - Other Income (Catering/ Events): C10
+        - Less: Sales Tax: C11
+        - Less: Tips Paid: C12
+        - Food Cost: C16
+        - Beverage Cost: C17
+        - Salaried Staff: C20
+        - Temp / Hourly Staff: C21
+        - Rent / Lease: C24
+        - Utilities: C25
+        - Internet & Phone: C26
+        - Software Subscriptions: C27
+        - Insurance: C28
+        - Loan Repayments: C29
+        - Others Fixed Expenses: C30
+        - One-time Repairs / Maintenance: C33
+        - Deep Cleaning / Pest Control: C34
+        - Equipment Rentals / Lease: C35
+        - Miscellaneous OpEx: C36
 
         User message: ${message}"
 
         If the message is not a valid update command, return null.
         Return ONLY the JSON object or null. Do not include any other text or comments.
         `;
+
+        console.log('Sending to AI:', message);
+
         const result = await model.generateContent(prompt);
         const response = result.response.text().trim();
+
+        console.log('AI Response:', response);
+
         if (response === 'null' || response === null){
             return null;
         }
-        const parsed = JSON.parse(response);
+
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+            return null;
+        }
+        const parsed = JSON.parse(jsonMatch[0]);
+        console.log('Parsed result:', parsed);
         return parsed;
     } catch (error) {
         console.error('Error parsing command:', error);

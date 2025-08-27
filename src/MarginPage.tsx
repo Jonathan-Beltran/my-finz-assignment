@@ -155,7 +155,7 @@ function ChatPanel() {
         if (result.success){
           const aiResponse: Message = {
           type: 'ai',
-            content: `${updateCommand.description}. Report has been updated.`
+            content: `${updateCommand.description}. Report has been updated!`
           };
           setMessages(prev => [...prev, aiResponse]);
         } else {
