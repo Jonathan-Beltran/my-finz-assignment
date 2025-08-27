@@ -10,9 +10,7 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  {/* listen to auth state changes and update the user state*/}
   useEffect(() => {
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -20,7 +18,6 @@ function App() {
     return unsubscribe;
   }, []);
 
-  {/* show loading screen while waiting for auth state to be determined*/}
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -28,6 +25,7 @@ function App() {
       </div>
     );
   }
+
 
   return (
     <BrowserRouter>

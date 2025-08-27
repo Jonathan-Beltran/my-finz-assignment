@@ -7,8 +7,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
-  {/* handle google sign in */}
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);

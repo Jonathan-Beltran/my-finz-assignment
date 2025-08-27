@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { parseCommand } from "./services/aiService";
+import { updateSheet } from "./services/sheetService";
 
 export default function Dashboard() {
   return (
@@ -145,12 +147,31 @@ function ChatPanel() {
     setMessages(prev => [...prev, userMessage]);
     setMessage("");
     setIsLoading(true);
+
     try {
-      const response: Message = {
-        type: 'ai',
-        content: 'Response'
-      };
-      setMessages(prev => [...prev, response]);
+      const updateCommand = await parseCommand(message);
+      if (updateCommand){
+        const result = await updateSheet(updateCommand.cell, updateCommand.value);
+        if (result.success){
+          const aiResponse: Message = {
+          type: 'ai',
+            content: `${updateCommand.description}. Report has been updated.`
+          };
+          setMessages(prev => [...prev, aiResponse]);
+        } else {
+          const aiResponse: Message = {
+            type: 'ai',
+            content: `Failed to update the report. ${result.message}`
+          };
+          setMessages(prev => [...prev, aiResponse]);
+        }
+      } else{
+        const aiResponse: Message = {
+          type: 'ai',
+          content: 'I can help with updating your report. Try telling me the metric you would like to change, and the value to change it to.'
+        }
+        setMessages(prev => [...prev, aiResponse]);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
