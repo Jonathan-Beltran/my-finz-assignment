@@ -133,7 +133,7 @@ function WeeklyMarginReport() {
   return (
     <div className="h-full">
       <iframe
-        src={`https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?usp=sharing`}
+        src={"https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF2uWXq7ixCmrCfRnJJmOZO5WRA-hszvhSjizFw8fnzkTgvXB6I5vf6W6Ly4oqzc7Offu4PM2-qz6/pubhtml?widget=true&amp;headers=false"}
         width="100%"
         height="100%"
         frameBorder="0"
