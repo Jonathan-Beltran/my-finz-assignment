@@ -128,12 +128,12 @@ export default function Dashboard() {
 
 // margin report component
 function WeeklyMarginReport() {
-  const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
+  
 
   return (
     <div className="h-full">
       <iframe
-        src={"https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF2uWXq7ixCmrCfRnJJmOZO5WRA-hszvhSjizFw8fnzkTgvXB6I5vf6W6Ly4oqzc7Offu4PM2-qz6/pubhtml?widget=true&amp;headers=false"}
+        src={"https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF2uWXq7ixCmrCfRnJJmOZO5WRA-hszvhSjizFw8fnzkTgvXB6I5vf6W6Ly4oqzc7Offu4PM2-qz6/pubhtml?widget=true&;headers=false"}
         width="100%"
         height="100%"
         frameBorder="0"
