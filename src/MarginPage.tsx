@@ -133,7 +133,7 @@ function WeeklyMarginReport() {
   return (
     <div className="h-full">
       <iframe
-        src={"https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF2uWXq7ixCmrCfRnJJmOZO5WRA-hszvhSjizFw8fnzkTgvXB6I5vf6W6Ly4oqzc7Offu4PM2-qz6/pubhtml?widget=true&;headers=false"}
+        src="https://docs.google.com/spreadsheets/d/1jAs3P-ciVXbBOhjfZ7ca7bGp-kFhhLn0bCyOkOW41J4/edit?usp=sharing&rm=minimal"
         width="100%"
         height="100%"
         frameBorder="0"
@@ -154,6 +154,7 @@ function ChatPanel() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -180,6 +181,7 @@ function ChatPanel() {
           };
           setMessages(prev => [...prev, aiResponse]);
         }
+
       } else{
         const aiResponse: Message = {
           type: 'ai',
