@@ -1,24 +1,49 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
 import './App.css'
 import LoginPage from './LoginPage'
 import MarginPage from './MarginPage'
+import { auth } from './firebase'
+import { onAuthStateChanged, type User} from 'firebase/auth'
+
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  {/* listen to auth state changes and update the user state*/}
+  useEffect(() => {
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  {/* show loading screen while waiting for auth state to be determined*/}
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
       <Routes>
         {/* login page route*/}
-        <Route path="/userlogin" element={<LoginPage />} />
+        <Route path="/userlogin" element={!user ? <LoginPage /> : <Navigate to= "/margin"/>} />
 
         {/* margin tab page route available only after login*/}
         <Route path="/margin" element={user ? <MarginPage /> : <Navigate to="/userlogin" />} />
 
-        {/* default route*
+        {/* default route*/}
         <Route path="/" element={<Navigate to={user ? "/margin" : "/userlogin"} />} />
-        */}
+        
+        {/*
         <Route path="/" element={<MarginPage/>} />
+        */}
       </Routes>
     </BrowserRouter>
   )

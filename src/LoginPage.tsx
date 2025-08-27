@@ -1,9 +1,21 @@
 import { useState } from "react";
 import { EyeOff } from "lucide-react";
+import {auth, googleProvider} from './firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+
+  {/* handle google sign in */}
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error){
+      console.error("Error signing in with Google:", error);
+    }
+  }
 
   return (
     <div className="min-h-screen w-full bg-white text-[#1F2937] flex flex-col">
@@ -89,6 +101,7 @@ export default function LoginPage() {
               {/* continue with google */}
               <button
                 type="button"
+                onClick={handleGoogleSignIn}
                 className="mx-auto mt-2 flex items-center justify-center gap-3 rounded-[10px] border bg-white"
                 style={{ width: 240, height: 48, borderColor: "#1F2937" }}
               >
