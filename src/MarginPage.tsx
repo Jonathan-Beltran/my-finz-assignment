@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { parseCommand } from "./services/aiService";
 import { updateSheet } from "./services/sheetService";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import {auth} from './firebase';
 
 export default function Dashboard() {
   return (
@@ -26,6 +29,18 @@ export default function Dashboard() {
 
 // sidebar component
   function Sidebar() {
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+      try {
+        await signOut(auth);
+        navigate('/userlogin');
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+    };
+
+    
     const navItems = [
       { name: 'Home', icon: '⌂', active: false },
       { name: 'Cashflow', icon: '∿', active: false },
@@ -50,9 +65,9 @@ export default function Dashboard() {
         
         {/* navigation items*/}
         <nav className="flex-1 px-4 mt-4">
-          {navItems.map((item) => (
+          {navItems.map((item, index) => (
             <a
-              key={item.name}
+              key={index}
               href="#"
               className={`flex items-center mb-2 ${
                 item.active 
@@ -94,8 +109,8 @@ export default function Dashboard() {
             <span style={{ marginRight: 12, fontSize: 16 }}>⚙</span>
             <span className="font-inter" style={{ fontWeight: 500, fontSize: 16 }}>Settings</span>
           </a>
-          <a 
-            href="#" 
+          <button 
+            onClick={handleLogout}
             className="flex items-center text-gray-300 hover:bg-slate-700"
             style={{
               height: 44,
@@ -105,7 +120,7 @@ export default function Dashboard() {
           >
             <span style={{ marginRight: 12, fontSize: 16 }}>⎋</span>
             <span className="font-inter" style={{ fontWeight: 500, fontSize: 16 }}>Logout</span>
-          </a>
+          </button>
         </div>
       </aside>
     );
