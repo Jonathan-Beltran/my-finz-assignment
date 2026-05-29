@@ -1,6 +1,14 @@
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 const API_KEY = import.meta.env.VITE_GOOGLE_SHEET_API_KEY;
 
+type SheetRow = {
+    id: number;
+    category: string;
+    amount: number;
+    percentage: string;
+    change: string;
+};
+
 export const getMarginData = async () => {
     try {
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A1:F44?key=${API_KEY}`);
@@ -17,28 +25,28 @@ export const getMarginData = async () => {
     }
 };
 
-const transformSheetData = (rawData: any[]) => {
+const transformSheetData = (rawData: unknown[][]): SheetRow[] => {
     if (!rawData || rawData.length < 2) return [];
     
-    return rawData.slice(1).map((row: any[], index: number) => ({
+    return rawData.slice(1).map((row: unknown[], index: number) => ({
       id: index,
-      category: row[0] || '',
-      amount: row[1] ? parseFloat(row[1].toString().replace(/[,$]/g, '')) : 0,
-      percentage: row[2] || '',
-      change: row[3] || ''
-    })).filter((row: any) => row.category);
+      category: String(row[0] || ''),
+      amount: row[1] ? parseFloat(String(row[1]).replace(/[,$]/g, '')) : 0,
+      percentage: String(row[2] || ''),
+      change: String(row[3] || '')
+    })).filter((row) => row.category);
   };
 
 export const updateSheet = async (cell: string, value: number) => {
     try {
         console.log(`Updating cell ${cell} with value: ${value}`);
-        
-        const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL;
-        
-        const url = `${APPS_SCRIPT_URL}?cell=${encodeURIComponent(cell)}&value=${encodeURIComponent(value)}`;
-        
-        const response = await fetch(url, {
-            method: 'GET',
+
+        const response = await fetch('/api/update-sheet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cell, value }),
         });
 
         if (!response.ok) {
@@ -65,4 +73,3 @@ export const updateSheet = async (cell: string, value: number) => {
         };
     }
 };
-

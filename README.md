@@ -47,8 +47,10 @@ VITE_GOOGLE_SHEET_API_KEY=your_google_sheets_api_key
 VITE_GEMINI_API_KEY=your_gemini_api_key
 
 # Apps Script URL for write operations
-VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
+APPS_SCRIPT_URL=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
 ```
+
+On Vercel, add `APPS_SCRIPT_URL` as a project environment variable. Sheet writes are proxied through `/api/update-sheet`, so the browser does not call Apps Script directly.
 
 ### 3. Google Apps Script Setup
 
