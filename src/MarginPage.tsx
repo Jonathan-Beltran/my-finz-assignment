@@ -159,12 +159,14 @@ function ChatPanel() {
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
+    // add user messages to messages state
     const userMessage: Message = { type: 'user', content: message };
     setMessages(prev => [...prev, userMessage]);
     setMessage("");
     setIsLoading(true);
 
     try {
+      // attempt to parse command
       const updateCommand = await parseCommand(message);
       if (updateCommand){
         const result = await updateSheet(updateCommand.cell, updateCommand.value);

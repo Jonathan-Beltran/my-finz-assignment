@@ -16,6 +16,7 @@ export default function LoginPage() {
   }
 
   return (
+    // root container
     <div className="min-h-screen w-full bg-white text-[#1F2937] flex flex-col">
       {/* logo */}
       <header className="mx-auto w-full max-w-[1200px] px-6 pt-8 pb-6">

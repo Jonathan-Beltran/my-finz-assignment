@@ -26,11 +26,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = new URL(appsScriptUrl);
-    url.searchParams.set('cell', cell);
-    url.searchParams.set('value', String(numericValue));
-
-    const response = await fetch(url);
+    const response = await fetch(appsScriptUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cell, value: numericValue }),
+    });
     const text = await response.text();
 
     let payload;
